@@ -1,6 +1,7 @@
 package main
 
 import (
+	"flag"
 	"fmt"
 	"os"
 	"os/exec"
@@ -89,11 +90,27 @@ func main() {
 		args = append(args, params...)
 
 	case "install":
+
+		flags := flag.NewFlagSet("kar", flag.ExitOnError)
+
+		var fv, fx bool
+		flags.BoolVar(&fv, "v", false, "Print the name of packages as they are compiled.")
+		flags.BoolVar(&fx, "x", false, "Print the commands.")
+
+		flags.Parse(os.Args[2:])
+		if fv {
+			args = append(args, "-v")
+		}
+
+		if fx {
+			args = append(args, "-x")
+		}
+
 		deps, err := deps(cwd, imp)
 		if err != nil {
 			ctx.Fatal(err)
 		}
-		args = append(args, "-v")
+
 		args = append(args, deps...)
 
 	default:
