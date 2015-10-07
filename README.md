@@ -26,6 +26,11 @@ $ cat demo_kar.go
 ```go
 // +build kar
 
+// Pay attention at the build tag. Kar builds your project with the build tag `kar`
+// which allows you the isolation of your _build code_ and as a result, dependencies
+// from your main code.
+
+
 package main
 
 import (
@@ -34,6 +39,10 @@ import (
   "github.com/omeid/kargar/kar"
 )
 
+
+// You must put your task definations inside an init.
+// Read more about the order of init functions and Package Initialization
+// at https://golang.org/ref/spec#Package_initialization
 func init() {
 
   kar.Run(func(build *kargar.Build) error {
