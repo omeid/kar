@@ -6,7 +6,7 @@ func init() {
 	build.Default.BuildTags = append(build.Default.BuildTags, "kar")
 }
 
-func Deps(dir string, imp string) ([]string, error) {
+func deps(dir string, imp string) ([]string, error) {
 	pkgs := map[string]struct{}{}
 	err := scanDeps(pkgs, dir, imp)
 
@@ -15,7 +15,7 @@ func Deps(dir string, imp string) ([]string, error) {
 	}
 
 	list := []string{}
-	for pkg, _ := range pkgs {
+	for pkg := range pkgs {
 		list = append(list, pkg)
 	}
 	return list, nil

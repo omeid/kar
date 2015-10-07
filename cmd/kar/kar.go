@@ -52,7 +52,6 @@ func init() {
 			continue
 		}
 
-		imp = imp
 		pkgdir = filepath.Join(gopath, "pkg", fmt.Sprintf("%s_%s_%s", runtime.GOOS, runtime.GOARCH, "kar"))
 		return
 	}
@@ -90,7 +89,7 @@ func main() {
 		args = append(args, params...)
 
 	case "install":
-		deps, err := Deps(cwd, imp)
+		deps, err := deps(cwd, imp)
 		if err != nil {
 			ctx.Fatal(err)
 		}
@@ -101,7 +100,7 @@ func main() {
 		ctx.Fatal("Invalid command. Expects `run` or `install`")
 	}
 
-	err = Go(args)
+	err = run(args)
 	if err != nil {
 		ctx.Fatal("BAD")
 	}
@@ -116,7 +115,7 @@ func hasKargar(files []string) bool {
 	return false
 }
 
-func Go(args []string) error {
+func run(args []string) error {
 	cmd := exec.Command("go", args...)
 	cmd.Stdin = os.Stdin
 	cmd.Stdout = os.Stdout
