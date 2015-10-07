@@ -1,0 +1,50 @@
+package main
+
+import "go/build"
+
+func init() {
+	build.Default.BuildTags = append(build.Default.BuildTags, "kar")
+}
+
+func Deps(dir string, imp string) ([]string, error) {
+	pkgs := map[string]struct{}{}
+	err := scanDeps(pkgs, dir, imp)
+
+	if err != nil {
+		return nil, err
+	}
+
+	list := []string{}
+	for pkg, _ := range pkgs {
+		list = append(list, pkg)
+	}
+	return list, nil
+}
+
+func scanDeps(packages map[string]struct{}, dir, imp string) error {
+
+	pkg, err := build.Import(imp, dir, build.ImportComment)
+	if err != nil {
+		return err
+	}
+
+	for _, imp := range pkg.Imports {
+
+		if imp == "C" {
+			continue
+		}
+
+		if _, ok := packages[imp]; ok {
+			continue
+		}
+
+		packages[imp] = struct{}{}
+
+		err := scanDeps(packages, dir, imp)
+		if err != nil {
+			return err
+		}
+	}
+
+	return nil
+}
