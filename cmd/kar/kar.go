@@ -89,7 +89,7 @@ func main() {
 		args = append(args, files...)
 		args = append(args, params...)
 
-	case "install":
+	case "install", "get":
 
 		flags := flag.NewFlagSet("kar", flag.ExitOnError)
 
@@ -106,15 +106,16 @@ func main() {
 			args = append(args, "-x")
 		}
 
-		deps, err := deps(cwd, imp)
-		if err != nil {
-			ctx.Fatal(err)
+		if command == "install" {
+			deps, err := deps(cwd, imp)
+			if err != nil {
+				ctx.Fatal(err)
+			}
+			args = append(args, deps...)
 		}
 
-		args = append(args, deps...)
-
 	default:
-		ctx.Fatal("Invalid command. Expects `run` or `install`")
+		ctx.Fatal("Invalid command. Expects `run`, `get, or `install`")
 	}
 
 	err = run(args)
@@ -125,7 +126,7 @@ func main() {
 
 func hasKargar(files []string) bool {
 	for _, file := range files {
-		if strings.HasSuffix("kar.go", file) {
+		if strings.HasSuffix(file, "kar.go") {
 			return true
 		}
 	}
