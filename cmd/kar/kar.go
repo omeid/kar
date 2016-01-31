@@ -120,7 +120,7 @@ func main() {
 
 	err = run(args)
 	if err != nil {
-		ctx.Fatal("BAD")
+		os.Exit(1)
 	}
 }
 
