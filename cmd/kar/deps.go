@@ -1,6 +1,9 @@
 package main
 
-import "go/build"
+import (
+	"go/build"
+	"strings"
+)
 
 func init() {
 	build.Default.BuildTags = append(build.Default.BuildTags, "kar")
@@ -31,6 +34,12 @@ func scanDeps(packages map[string]struct{}, dir, imp string) error {
 	for _, imp := range pkg.Imports {
 
 		if imp == "C" {
+			continue
+		}
+
+		// See https://github.com/golang/go/issues/17417
+		// catch internal vendoring in net/http since go 1.7
+		if strings.HasPrefix(imp, "golang_org/x/") {
 			continue
 		}
 
