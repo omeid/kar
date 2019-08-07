@@ -15,7 +15,7 @@ import (
 // Run setups a build and runs the listed tasks and cancels the
 // build on a SIGTREM or INTERRUPT.
 // It also calls os.Exit with appropriate code.
-func Run(setup func(b *kargar.Build) error) {
+func Run(setup func(b *kargar.Build) error, cleanup func(int)) {
 	//log.Flags = *level
 
 	interrupts := make(chan os.Signal, 1)
@@ -77,5 +77,9 @@ func Run(setup func(b *kargar.Build) error) {
 
 	wg.Wait()
 	//XXX: atomic operation uncessary?
-	os.Exit(int(atomic.LoadUint32(&ret)))
+	retcode := int(atomic.LoadUint32(&ret))
+	if cleanup != nil {
+		cleanup(retcode)
+	}
+	os.Exit(retcode)
 }
